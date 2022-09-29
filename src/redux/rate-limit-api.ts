@@ -7,7 +7,7 @@ export const rateLimitApi = createApi({
         baseUrl : 'http://localhost:3000/',
         prepareHeaders: (headers, { getState }) => {
             const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlkIjoxLCJmaXJzdE5hbWUiOiJKb2huI'; //(getState() as RootState).auth.token
-            // If we have a token set in state, let's assume that we should be passing it.
+
             if (token) {
                 headers.set('authorization', `Bearer ${token}`)
             }
@@ -17,14 +17,51 @@ export const rateLimitApi = createApi({
         },
     }),
     endpoints : (build) => ({
-        getUser : build.query<string, string>({
+        getPage : build.query<string, void>({
+            query : () => ({
+                url : '/',
+                method: "GET",
+            }),
+        }),
+        getUsers : build.query<string, string>({
             query : (str : string) => ({
                 url : '/users',
                 method: "GET",
             }),
-            extraOptions: { maxRetries: 100 },
-        })
+        }),
+        getUser : build.query<string, string>({
+            query : (id : string) => ({
+                url : `/users/:id=${id}`,
+                method: "GET",
+            }),
+        }),
+        createUser : build.mutation<string, void>({
+            query : () => ({
+                url : `/users`,
+                method: "POST",
+                body : ''
+            }),
+        }),
+        updateUser : build.mutation<string, string>({
+            query : (id : string) => ({
+                url : `/users/:id=${id}`,
+                method: "PUT",
+                body : ''
+            }),
+        }),
+        deleteUser : build.mutation<string, string>({
+            query : (id : string) => ({
+                url : `/users/:id=${id}`,
+                method: "DELETE",
+            }),
+        }),
+        rateLimit : build.query<string, void>({
+            query : () => ({
+                url : `/rate-limits`,
+                method: "GET",
+            }),
+        }),
     })
 });
 
-export const { useGetUserQuery } = rateLimitApi;
+export const {useRateLimitQuery, useGetUsersQuery, useGetPageQuery, useGetUserQuery, useCreateUserMutation, useUpdateUserMutation, useDeleteUserMutation } = rateLimitApi;
