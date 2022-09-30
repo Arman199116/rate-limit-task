@@ -1,33 +1,42 @@
+import { RootState } from "./index";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 
 export const rateLimitApi = createApi({
     reducerPath : 'rateLimit',
     baseQuery : fetchBaseQuery({
-        baseUrl : 'http://localhost:3000/',
+        baseUrl : 'http://localhost:5000/',
         prepareHeaders: (headers, { getState }) => {
-            const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlkIjoxLCJmaXJzdE5hbWUiOiJKb2huI'; //(getState() as RootState).auth.token
+            const token = (getState() as RootState).auth.token; //(getState() as RootState).auth.token
 
             if (token) {
                 headers.set('authorization', `Bearer ${token}`)
             }
             headers.set('Access-Control-Allow-Origin', `*`);
-            headers.set('Content-Type', 'text/html');
+            headers.set('Content-Type', 'application/json');
             return headers;
         },
     }),
     endpoints : (build) => ({
         getPage : build.query<string, void>({
-            query : () => ({
-                url : '/',
-                method: "GET",
-            }),
+            query : () => {
+                
+                return ({
+                    url : '/',
+                    method: "GET",
+                })
+
+            },
         }),
-        getUsers : build.query<string, string>({
-            query : (str : string) => ({
-                url : '/users',
-                method: "GET",
-            }),
+        getUsers : build.query<string, void>({
+            query : () => {
+                
+                    return {
+                        url : '/users',
+                        method: "GET",
+                    }
+                    
+            },
         }),
         getUser : build.query<string, string>({
             query : (id : string) => ({
